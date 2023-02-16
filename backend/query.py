@@ -1,44 +1,27 @@
 
 
-import random
-import xlsxwriter
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
-# Create a workbook and add a worksheet.
-workbook = xlsxwriter.Workbook('savedfile.xlsx')
-worksheet = workbook.add_worksheet()
+packet = io.BytesIO()
+canvas = canvas.Canvas(packet, pagesize=letter)
+textobject = canvas.beginText()
+textobject.setTextOrigin(10, 740)
+textobject.setFont("Times-Roman", 12)
 
-# Add a bold format to use to highlight cells.
-bold = workbook.add_format({'bold': True})
+textobject.textLines('''Road safety is an important factor in ensuring the safety of all drivers, passengers, and pedestrians. 
+It is essential to be aware of the rules of the road and to follow them at all times. 
+This includes following the speed limit, obeying traffic signals, and being aware of other drivers. 
+It is also important to be aware of the weather conditions and to adjust your driving accordingly. 
+By following these rules, you can help to ensure the safety of everyone on the road.''')
 
-# Write some data headers.
-worksheet.write('A1', 'Column 1', bold)
-worksheet.write('B1', 'Column 2', bold)
-worksheet.write('C1', 'Column 3', bold)
-worksheet.write('D1', 'Column 4', bold)
-worksheet.write('E1', 'Column 5', bold)
-worksheet.write('F1', 'Column 6', bold)
-worksheet.write('G1', 'Column 7', bold)
-worksheet.write('H1', 'Column 8', bold)
-worksheet.write('I1', 'Column 9', bold)
-worksheet.write('J1', 'Column 10', bold)
+canvas.drawText(textobject)
+canvas.save()
 
-# Start from the first cell below the headers.
-row = 1
-col = 0
+packet.seek(0)
+new_pdf = packet.read()
 
-# Generate 100 random numbers and write them to the worksheet.
-for i in range(100):
-    worksheet.write(row, col,     random.randint(1, 100))
-    worksheet.write(row, col + 1, random.randint(1, 100))
-    worksheet.write(row, col + 2, random.randint(1, 100))
-    worksheet.write(row, col + 3, random.randint(1, 100))
-    worksheet.write(row, col + 4, random.randint(1, 100))
-    worksheet.write(row, col + 5, random.randint(1, 100))
-    worksheet.write(row, col + 6, random.randint(1, 100))
-    worksheet.write(row, col + 7, random.randint(1, 100))
-    worksheet.write(row, col + 8, random.randint(1, 100))
-    worksheet.write(row, col + 9, random.randint(1, 100))
-    row += 1
-
-# Close the workbook.
-workbook.close()
+#Save pdf file
+with open("savedfile.pdf", "wb") as f:
+    f.write(new_pdf)
