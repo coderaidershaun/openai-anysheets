@@ -75,7 +75,7 @@ async def create_item(prompt: Prompt):
     init_prompt = "Write me a python script only providing the code to "
     mid_prompt = ""
     user_prompt = prompt.prompt.replace(".", ",")
-    end_prompt = ", any python libraries must be imported, the file must be called savedfile, there should be no text before importing packages, if pulling binance data use the requests library otherwise do not use data from the internet"
+    end_prompt = ", any python libraries referenced in the script must be imported, the file must be called savedfile, there should be no text before importing packages, if pulling binance data use the requests library otherwise do not use data from the internet"
 
     # Handle Excel
     if prompt.promptType == "/excel":
