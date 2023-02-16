@@ -54,7 +54,7 @@ function Controller() {
       if (isPowerpoint && !promptType) {
         setPromptType("/powerpoint");
         setBgColors("from-red-500 to-red-700");
-        setFileName("savedfile.docx");
+        setFileName("savedfile.pptx");
       }
 
       if (!isExcel && !isPdf && !isWord && !isPowerpoint) {
@@ -136,7 +136,7 @@ function Controller() {
       <div className="flex flex-col h-full w-full justify-center items-center">
         <h2 className="text-5xl">Create Anything</h2>
         <h3 className="mt-1 font-light text-lg">
-          Start your prompt with /excel or /pdf or /word or /powerpoint
+          Start your prompt with /excel or /pdf or /word has ...
         </h3>
         <form
           onSubmit={handleSubmit}
@@ -154,7 +154,10 @@ function Controller() {
               {promptType}
             </div>
           </div>
-          <SubmitButton isDisabled={isDisabled || isLoading} />
+          <SubmitButton
+            isDisabled={isDisabled || isLoading}
+            isLoading={isLoading}
+          />
         </form>
         <Message message={message} />
       </div>
