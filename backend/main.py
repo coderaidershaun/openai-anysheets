@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from decouple import config
 import openai
 from fastapi.responses import FileResponse
+import os
 
 ## Command:
 # uvicorn main:app --reload
@@ -49,7 +50,6 @@ async def say_hello():
 @app.get("/execute-query/{filename}", response_class=FileResponse)
 async def say_hello(filename):
     import query
-    print(filename)
     file_path = filename
     return FileResponse(file_path, filename=file_path)
 
@@ -62,33 +62,38 @@ async def create_item(prompt: Prompt):
     openai.organization = config("OPEN_AI_ORG")
     openai.api_key = config("OPEN_AI_KEY")
 
+    # Remove any existing files
+    try:
+        os.remove("savedfile.xlsx")
+        os.remove("savedfile.pdf")
+        os.remove("savedfile.pptx")
+        os.remove("savedfile.docx")
+    except:
+        pass
+
     # Initialize Prompt Structure
     init_prompt = "Write me a python script only providing the code to "
     mid_prompt = ""
     user_prompt = prompt.prompt.replace(".", ",")
-    end_prompt = ", any python libraries must be imported, the file must be called savedfile, there should be no text before importing packages"
+    end_prompt = ", any python libraries must be imported, the file must be called savedfile, there should be no text before importing packages, if pulling binance data use the requests library otherwise do not use data from the internet"
 
     # Handle Excel
     if prompt.promptType == "/excel":
-        last_saved = "savedfile.xlsx"
         mid_prompt = "create an excel file that "
         user_prompt = user_prompt.replace("/excel", "")
 
     # Handle Word
     if prompt.promptType == "/word":
-        last_saved = "savedfile.docx"
         mid_prompt = "create a word document that "
         user_prompt = user_prompt.replace("/word", "")
 
     # Handle PDF
     if prompt.promptType == "/pdf":
-        last_saved = "savedfile.pdf"
         mid_prompt = "create a pdf document that "
         user_prompt = user_prompt.replace("/pdf", "")
 
     # Handle Powerpoint
     if prompt.promptType == "/powerpoint":
-        last_saved = "savedfile.pptx"
         mid_prompt = "create a powerpoint presentation that "
         user_prompt = user_prompt.replace("/powerpoint", "")
 
@@ -105,7 +110,7 @@ async def create_item(prompt: Prompt):
     query = openai.Completion.create(
         model="text-davinci-003",
         prompt=full_prompt,
-        max_tokens=500,
+        max_tokens=1000,
         temperature=0.2
     )
 
